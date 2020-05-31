@@ -1,4 +1,4 @@
-package com.rfgomes.manga4all.manga
+package com.rfgomes.manga4all.manga.api
 
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.{GetMapping, RequestMapping, RestController}
