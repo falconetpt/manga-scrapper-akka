@@ -1,7 +1,7 @@
 package com.rfgomes.manga4all.scrapper
 
 import com.rfgomes.manga4all.scrapper.client.ScrapperClient
-import com.rfgomes.manga4all.scrapper.scrapper.{ManganeloScrapper, Scrapper}
+import com.rfgomes.manga4all.scrapper.scrapper.{ManganeloScrapper, Scrapper, ScrapperDecorator}
 
 trait Source {
   def name: String
@@ -11,7 +11,7 @@ trait Source {
 case class Manganelo() extends Source {
   override def name: String = classOf[Manganelo].getSimpleName
 
-  override def scrapper: Scrapper = ManganeloScrapper(ScrapperClient.DEFAULT)
+  override def scrapper: Scrapper = ScrapperDecorator(ManganeloScrapper(ScrapperClient.DEFAULT))
 }
 
 object Source {
