@@ -10,7 +10,7 @@ import scala.io.Source
 
 class ManganeloScrapperSpec extends AnyWordSpecLike {
   val readFile = (filePath: String) => Source.fromFile(filePath).mkString
-  val manganelo = scrapper.Source.manganelo
+  val manganelo = scrapper.Source.manganelo.name
 
   "latest mangas" should {
 

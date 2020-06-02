@@ -7,4 +7,4 @@ case class MangaChapterImages(mangaId: String,
                               images: List[String],
                               previousChapter: Option[String],
                               nextChapter: Option[String],
-                              source: Source)
+                              source: String)

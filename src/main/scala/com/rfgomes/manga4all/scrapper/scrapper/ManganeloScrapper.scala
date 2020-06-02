@@ -56,7 +56,7 @@ case class ManganeloScrapper(client: ScrapperClient[Document]) extends Scrapper 
 
     val chapterList = elements
       .map(x => (x.attr("href").split("/").last, x.attr("title")))
-      .map(x => MangaChapter(mangaInfo.id, x._1, x._2, Source.manganelo))
+      .map(x => MangaChapter(mangaInfo.id, x._1, x._2, Source.manganelo.name))
       .toList
 
     MangaChapterList(mangaInfo.id, mangaInfo.name, "", mangaInfo.imageUrl, chapterList)
@@ -91,7 +91,7 @@ case class ManganeloScrapper(client: ScrapperClient[Document]) extends Scrapper 
 
     val imageList = images.map(e => e.attr("src")).toList
 
-    MangaChapterImages(mangaChapter.mangaId, mangaChapter.chapterId, imageList, prev, next, Source.manganelo)
+    MangaChapterImages(mangaChapter.mangaId, mangaChapter.chapterId, imageList, prev, next, Source.manganelo.name)
   }
 
 
@@ -114,7 +114,7 @@ case class ManganeloScrapper(client: ScrapperClient[Document]) extends Scrapper 
     val title = element.attr("title")
     val imgUrl = element.selectFirst("img").attr("src")
 
-    MangaInfo(id = id, name = title, imageUrl = imgUrl, source = Source.manganelo)
+    MangaInfo(id = id, name = title, imageUrl = imgUrl, source = Source.manganelo.name)
   }
 
 }

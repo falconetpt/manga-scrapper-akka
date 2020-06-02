@@ -2,15 +2,24 @@ package com.rfgomes.manga4all
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
-import akka.http.scaladsl.server.Directives.{complete, concat, get, pathPrefix}
-import akka.http.scaladsl.server.Route
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
+import akka.http.scaladsl.server.{Directives, Route}
 import akka.stream.ActorMaterializer
-import scala.concurrent.ExecutionContext.Implicits.global
+import com.rfgomes.manga4all.manga.domain.MangaInfo
+import com.rfgomes.manga4all.scrapper.Source
+import spray.json._
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.io.StdIn
 
-object Application extends App {
+
+
+// collect your json format instances into a support trait:
+trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
+  implicit val mangaInfo = jsonFormat4(MangaInfo) // contains List[Item]
+}
+
+object Application extends App with Directives with JsonSupport {
   implicit val system = ActorSystem("httpController")
   implicit val materializer = ActorMaterializer()
 
@@ -19,12 +28,7 @@ object Application extends App {
     concat(
       get {
         pathPrefix("hello") {
-          complete(
-            HttpEntity(
-              ContentTypes.`text/plain(UTF-8)`,
-              "hello"
-            )
-          )
+          complete(Source.manganelo.scrapper.getLatest(1).get)
         }
       }
     )
