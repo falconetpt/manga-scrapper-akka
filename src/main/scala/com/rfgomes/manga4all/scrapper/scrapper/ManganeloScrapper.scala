@@ -2,7 +2,7 @@ package com.rfgomes.manga4all.scrapper.scrapper
 
 import java.util.stream.Collectors
 
-import com.rfgomes.manga4all.manga.domain.{MangaChapter, MangaChapterList, MangaInfo, SearchManga}
+import com.rfgomes.manga4all.manga.domain.{MangaChapter, MangaChapterImages, MangaChapterList, MangaInfo, SearchManga}
 import com.rfgomes.manga4all.scrapper.Source
 import com.rfgomes.manga4all.scrapper.client.ScrapperClient
 import org.jsoup.nodes.{Document, Element}
@@ -60,6 +60,38 @@ case class ManganeloScrapper(client: ScrapperClient[Document]) extends Scrapper 
       .toList
 
     MangaChapterList(mangaInfo.id, mangaInfo.name, "", mangaInfo.imageUrl, chapterList)
+  }
+
+
+  override def extractChapterImages(mangaChapter: MangaChapter): Try[MangaChapterImages] = Try {
+    val document = client.getClient(s"$url/chapter/${mangaChapter.mangaId}/${mangaChapter.chapterId}").get
+
+    val images = document.body()
+      .getElementsByClass("container-chapter-reader")
+      .first()
+      .select("img")
+      .iterator()
+      .asScala
+
+    val prev = document.body()
+      .getElementsByClass("navi-change-chapter-btn-prev")
+      .iterator()
+      .asScala
+      .flatMap(e => e.attr("href").split("/").lastOption)
+      .toList
+      .headOption
+
+    val next = document.body()
+      .getElementsByClass("navi-change-chapter-btn-next")
+      .iterator()
+      .asScala
+      .flatMap(e => e.attr("href").split("/").lastOption)
+      .toList
+      .headOption
+
+    val imageList = images.map(e => e.attr("src")).toList
+
+    MangaChapterImages(mangaChapter.mangaId, mangaChapter.chapterId, imageList, prev, next, Source.manganelo)
   }
 
 

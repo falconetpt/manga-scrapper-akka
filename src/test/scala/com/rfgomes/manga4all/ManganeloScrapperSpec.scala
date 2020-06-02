@@ -1,6 +1,6 @@
 package com.rfgomes.manga4all
 
-import com.rfgomes.manga4all.manga.domain.{MangaChapter, MangaChapterList, MangaInfo, SearchManga}
+import com.rfgomes.manga4all.manga.domain.{MangaChapter, MangaChapterImages, MangaChapterList, MangaInfo, SearchManga}
 import com.rfgomes.manga4all.scrapper.client.MockClient
 import com.rfgomes.manga4all.scrapper.scrapper.ManganeloScrapper
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -79,6 +79,58 @@ class ManganeloScrapperSpec extends AnyWordSpecLike {
           MangaChapter("read_one_piece_manga_online_free4", "chapter_1.1", "One Piece chapter Chapter 1.1 : Romance Dawn [Version 1]", manganelo),
           MangaChapter("read_one_piece_manga_online_free4", "chapter_1", "One Piece chapter Chapter 1 : Romance Dawn", manganelo)
         )
+      )
+
+      assert(tryLatest.isSuccess, "Response is sucessful")
+      assert(tryLatest.get == expectedResult, "List is the same as expected")
+    }
+
+  }
+
+  "manga images" should {
+
+    "return the manga images with prev and next filled" in {
+      val scrapper = ManganeloScrapper(MockClient(readFile("src/test/resources/manganelo/imagesWithNextAndPrev.html")))
+      val tryLatest = scrapper.extractChapterImages(MangaChapter("pn918005", "chapter_109", "chapter 109", manganelo))
+      val expectedResult = MangaChapterImages(
+        "pn918005",
+        "chapter_109",
+        (1 to 46).map(i => s"https://s3.mkklcdnv3.com/mangakakalot/p1/pn918005/chapter_109/$i.jpg").toList,
+        Some("chapter_108"),
+        Some("chapter_110"),
+        manganelo
+      )
+
+      assert(tryLatest.isSuccess, "Response is sucessful")
+      assert(tryLatest.get == expectedResult, "List is the same as expected")
+    }
+
+    "return the manga images with only prev filled" in {
+      val scrapper = ManganeloScrapper(MockClient(readFile("src/test/resources/manganelo/imagesWithPrev.html")))
+      val tryLatest = scrapper.extractChapterImages(MangaChapter("pn918005", "chapter_110", "chapter 109", manganelo))
+      val expectedResult = MangaChapterImages(
+        "pn918005",
+        "chapter_110",
+        (1 to 57).map(i => s"https://s3.mkklcdnv3.com/mangakakalot/p1/pn918005/chapter_110_season_1_finale/$i.jpg").toList,
+        Some("chapter_109"),
+        None,
+        manganelo
+      )
+
+      assert(tryLatest.isSuccess, "Response is sucessful")
+      assert(tryLatest.get == expectedResult, "List is the same as expected")
+    }
+
+    "return the manga images with only next filled" in {
+      val scrapper = ManganeloScrapper(MockClient(readFile("src/test/resources/manganelo/imagesWithNext.html")))
+      val tryLatest = scrapper.extractChapterImages(MangaChapter("pn918005", "chapter_0", "chapter_0", manganelo))
+      val expectedResult = MangaChapterImages(
+        "pn918005",
+        "chapter_0",
+        (1 to 9).map(i => s"https://s3.mkklcdnv3.com/mangakakalot/p1/pn918005/chapter_0_prologue/$i.jpg").toList,
+        None,
+        Some("chapter_1"),
+        manganelo
       )
 
       assert(tryLatest.isSuccess, "Response is sucessful")
