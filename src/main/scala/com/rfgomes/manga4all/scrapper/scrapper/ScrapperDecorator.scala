@@ -10,14 +10,17 @@ import com.google.common.cache.{CacheBuilder, CacheLoader, LoadingCache}
 case class ScrapperDecorator(scrapper: Scrapper) extends Scrapper {
   private val maxSizeCache = 1000
 
-  private val getLatestCached = generateCache(scrapper.getLatest, (12, TimeUnit.HOURS))
-  private val getPopularCached = generateCache(scrapper.getPopular, (12, TimeUnit.HOURS))
-  private val searchCached = generateCache(scrapper.search, (24, TimeUnit.HOURS))
-  private val chapterListCached = generateCache(scrapper.extractChapterList, (2, TimeUnit.HOURS))
-  private val chapterImagesCached = generateCache(scrapper.extractChapterImages, (12, TimeUnit.HOURS))
+  private val getLatestCached = generateCache(scrapper.getLatest, (6000L, TimeUnit.SECONDS))
+  private val getPopularCached = generateCache(scrapper.getPopular, (6000L, TimeUnit.HOURS))
+  private val searchCached = generateCache(scrapper.search, (6000L, TimeUnit.HOURS))
+  private val chapterListCached = generateCache(scrapper.extractChapterList, (6000L, TimeUnit.HOURS))
+  private val chapterImagesCached = generateCache(scrapper.extractChapterImages, (6000L, TimeUnit.HOURS))
 
 
-  override def getLatest(page: Int): Try[List[MangaInfo]] = getLatestCached.get(page)
+  override def getLatest(page: Int): Try[List[MangaInfo]] = {
+    println(s"latest - $page")
+    getLatestCached.get(page)
+  }
 
   override def getPopular(page: Int): Try[List[MangaInfo]] = getPopularCached.get(page)
 
@@ -27,14 +30,14 @@ case class ScrapperDecorator(scrapper: Scrapper) extends Scrapper {
 
   override def extractChapterImages(mangaChapter: MangaChapter): Try[MangaChapterImages] = chapterImagesCached.get(mangaChapter)
 
-  private def generateCache[I, O](f: I => O, config: (Int, TimeUnit)): LoadingCache[I, O] = {
+  private def generateCache[I, O](f: I => O, config: (Long, TimeUnit)): LoadingCache[I, O] = {
     val cacheLoader: CacheLoader[I, O] = new CacheLoader[I, O]() {
       override def load(key: I): O = f(key)
     }
 
     CacheBuilder.newBuilder()
-      .expireAfterAccess(1, TimeUnit.HOURS)
       .maximumSize(maxSizeCache)
+      .expireAfterAccess(config._1, config._2)
       .build[I, O](cacheLoader)
   }
 }
