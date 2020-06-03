@@ -9,12 +9,6 @@ import com.rfgomes.manga4all.scrapper.Source
 import spray.json._
 
 
-
-// collect your json format instances into a support trait:
-trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
-  implicit val mangaInfo = jsonFormat4(MangaInfo) // contains List[Item]
-}
-
 object Application extends App {
   implicit val system = ActorSystem("httpController")
   implicit val materializer = ActorMaterializer()
@@ -22,14 +16,12 @@ object Application extends App {
 
   val port: Int = sys.env.getOrElse("PORT", "8080").toInt
   WebServer.startServer("0.0.0.0", port)
-
-  println(s"Server online at http://localhost:$port/\nPress RETURN to stop...")
-//  StdIn.readLine() // let it run until user presses return
-//  bindingFuture
-//    .flatMap(_.unbind()) // trigger unbinding from the port
-//    .onComplete(_ => system.terminate()) // and shutdown when done
 }
 
+// collect your json format instances into a support trait:
+trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
+  implicit val mangaInfo = jsonFormat4(MangaInfo)
+}
 
 object WebServer extends HttpApp with Directives with JsonSupport {
 
