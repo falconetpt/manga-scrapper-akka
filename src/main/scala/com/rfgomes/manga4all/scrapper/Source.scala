@@ -8,14 +8,14 @@ trait Source {
   def scrapper: Scrapper
 }
 
-case class Manganelo() extends Source {
-  override def name: String = classOf[Manganelo].getSimpleName
+case object Manganelo extends Source {
+  override def name: String = "Manganelo"
 
   override def scrapper: Scrapper = ScrapperDecorator(ManganeloScrapper(ScrapperClient.DEFAULT))
 }
 
 object Source {
-  val manganelo = Manganelo()
+  val manganelo = Manganelo
 
   val sources: Set[Source] = Set(
     manganelo

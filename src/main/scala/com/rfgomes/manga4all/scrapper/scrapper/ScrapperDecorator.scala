@@ -17,10 +17,7 @@ case class ScrapperDecorator(scrapper: Scrapper) extends Scrapper {
   private val chapterImagesCached = generateCache(scrapper.extractChapterImages, (6000L, TimeUnit.HOURS))
 
 
-  override def getLatest(page: Int): Try[List[MangaInfo]] = {
-    println(s"latest - $page")
-    getLatestCached.get(page)
-  }
+  override def getLatest(page: Int): Try[List[MangaInfo]] = getLatestCached.get(page)
 
   override def getPopular(page: Int): Try[List[MangaInfo]] = getPopularCached.get(page)
 

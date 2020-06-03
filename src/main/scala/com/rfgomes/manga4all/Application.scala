@@ -24,12 +24,13 @@ trait JsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
 }
 
 object WebServer extends HttpApp with Directives with JsonSupport {
+  val source = Source.manganelo.scrapper
 
   override protected def routes: Route =
     concat(
       get {
         pathPrefix("hello") {
-          complete(Source.manganelo.scrapper.getLatest(1).get)
+          complete(source.getLatest(1).get)
         }
       }
     )
