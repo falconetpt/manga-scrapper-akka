@@ -1,14 +1,13 @@
 package com.rfgomes.manga4all.scrapper.scrapper
 
-import java.util.stream.Collectors
-
-import com.rfgomes.manga4all.manga.domain.{MangaChapter, MangaChapterImages, MangaChapterList, MangaInfo, SearchManga}
+import com.rfgomes.manga4all.manga.domain._
 import com.rfgomes.manga4all.scrapper.Source
 import com.rfgomes.manga4all.scrapper.client.ScrapperClient
 import org.jsoup.nodes.{Document, Element}
 
-import scala.util.Try
 import scala.jdk.CollectionConverters._
+import scala.util.Try
+
 
 case class ManganeloScrapper(client: ScrapperClient[Document]) extends Scrapper {
   private val url = "https://manganelo.com"
