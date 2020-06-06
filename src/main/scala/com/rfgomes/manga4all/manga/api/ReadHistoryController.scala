@@ -1,25 +1,18 @@
 package com.rfgomes.manga4all.manga.api
 
 import akka.actor.{ActorSystem, Props}
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.server.Route
 import akka.pattern.ask
 import akka.util.Timeout
 import com.rfgomes.manga4all.WebServer.{as, complete, concat, entity, get, onSuccess, pathPrefix, post}
-import com.rfgomes.manga4all.history.{FavoriteActor, ReadHistoryActor}
-import com.rfgomes.manga4all.history.FavoriteActor.{AddFavorite, GetAllFavorites}
+import com.rfgomes.manga4all.history.ReadHistoryActor
 import com.rfgomes.manga4all.history.ReadHistoryActor.{GetReadHistory, SaveReadManga}
-import com.rfgomes.manga4all.manga.domain.{MangaChapterImages, MangaInfo}
-import spray.json.DefaultJsonProtocol
+import com.rfgomes.manga4all.manga.domain.MangaChapterImages
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-trait MangaChapterImagesJsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
-  implicit val mangaInfo = jsonFormat6(MangaChapterImages)
-}
-
-object ReadHistoryController extends MangaChapterImagesJsonSupport {
+object ReadHistoryController extends MangaApiJsonSupport {
   val system = ActorSystem("FavoriteActorSystem")
   val readHistory = system.actorOf(Props[ReadHistoryActor])
 

@@ -28,7 +28,7 @@ case class ManganeloScrapper(client: ScrapperClient[Document]) extends Scrapper 
 
   override def search(search: SearchManga): Try[List[MangaInfo]] = Try {
     val searchText= search.searchText.replaceAll(" ", "_")
-    val document = client.getClient(s"$url/search/$searchText?page=${search.page}").get
+    val document = client.getClient(s"$url/search/story/$searchText?page=${search.page}").get
 
     val elements = document.body()
       .getElementsByClass("panel-search-story")

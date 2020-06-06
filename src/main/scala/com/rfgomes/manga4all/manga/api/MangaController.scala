@@ -1,16 +1,12 @@
 package com.rfgomes.manga4all.manga.api
 
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.PathMatchers.LongNumber
 import akka.http.scaladsl.server.Route
-import com.rfgomes.manga4all.WebServer.{complete, get, pathPrefix, source}
-import com.rfgomes.manga4all.manga.domain.MangaInfo
-import spray.json.DefaultJsonProtocol
-
-trait MangaApiJsonSupport extends SprayJsonSupport with DefaultJsonProtocol {
-  implicit val mangaInfo = jsonFormat4(MangaInfo)
-}
+import com.rfgomes.manga4all.WebServer.{as, complete, entity, get, pathPrefix, source}
+import com.rfgomes.manga4all.history.FavoriteActor.AddFavorite
+import com.rfgomes.manga4all.manga.api.FavoritesController.favoritesActor
+import com.rfgomes.manga4all.manga.domain.{MangaChapter, MangaInfo, SearchManga}
 
 object MangaController extends MangaApiJsonSupport {
   def route(): Route = {
@@ -23,6 +19,28 @@ object MangaController extends MangaApiJsonSupport {
       get {
         pathPrefix("popular" / LongNumber) { page =>
           complete(source.getPopular(page.toInt).get)
+        }
+      },
+      post {
+        pathPrefix("search") {
+          entity(as[SearchManga]) { manga =>
+            complete(source.search(manga).get)
+          }
+        }
+      },
+      post {
+        pathPrefix("chapter" / "list") {
+          entity(as[MangaInfo]) { manga =>
+            println(manga)
+            complete(source.extractChapterList(manga).get)
+          }
+        }
+      },
+      post {
+        pathPrefix("chapter" / "extract") {
+          entity(as[MangaChapter]) { manga =>
+            complete(source.extractChapterImages(manga).get)
+          }
         }
       }
     )
