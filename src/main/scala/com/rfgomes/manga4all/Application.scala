@@ -3,7 +3,7 @@ package com.rfgomes.manga4all
 import akka.actor.ActorSystem
 import akka.http.scaladsl.server.{Directives, HttpApp, Route}
 import akka.stream.ActorMaterializer
-import com.rfgomes.manga4all.manga.api.{FavoritesController, MangaController}
+import com.rfgomes.manga4all.manga.api.{FavoritesController, MangaController, ReadHistoryController}
 import com.rfgomes.manga4all.scrapper.Source
 
 import scala.language.postfixOps
@@ -24,6 +24,7 @@ object WebServer extends HttpApp with Directives {
   override protected def routes: Route =
     concat(
       MangaController.route(),
-      FavoritesController.route()
+      FavoritesController.route(),
+      ReadHistoryController.route()
     )
 }
