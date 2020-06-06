@@ -2,18 +2,17 @@ package com.rfgomes.manga4all.manga.api
 
 import akka.actor.{ActorSystem, Props}
 import akka.http.scaladsl.server.Route
+import akka.pattern.ask
 import akka.util.Timeout
 import com.rfgomes.manga4all.WebServer.{as, complete, concat, entity, get, onSuccess, pathPrefix, post}
-import com.rfgomes.manga4all.history.FavoriteActor.AddFavorite
-import com.rfgomes.manga4all.manga.domain.MangaInfo
 import com.rfgomes.manga4all.history.FavoriteActor
 import com.rfgomes.manga4all.history.FavoriteActor.{AddFavorite, GetAllFavorites}
+import com.rfgomes.manga4all.manga.domain.MangaInfo
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
-import akka.pattern.ask
 
-object FavoritesController extends MangaApiJsonSupport {
+object ReadHistoryController extends MangaApiJsonSupport {
   val system = ActorSystem("FavoriteActorSystem")
   val favoritesActor = system.actorOf(Props[FavoriteActor])
 
