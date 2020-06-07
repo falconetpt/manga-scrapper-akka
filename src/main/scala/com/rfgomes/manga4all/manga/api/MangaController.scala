@@ -1,12 +1,17 @@
 package com.rfgomes.manga4all.manga.api
 
+import akka.actor.{ActorSystem, Props}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.PathMatchers.LongNumber
 import akka.http.scaladsl.server.Route
 import com.rfgomes.manga4all.WebServer.{as, complete, entity, get, pathPrefix, source}
-import com.rfgomes.manga4all.manga.domain.{MangaChapter, MangaInfo, SearchManga}
+import com.rfgomes.manga4all.manga.domain.MangaActor.GetManga
+import com.rfgomes.manga4all.manga.domain.{MangaActor, MangaChapter, MangaInfo, SearchManga}
 
 object MangaController extends MangaApiJsonSupport {
+  private val system = ActorSystem("mangaController")
+  private val mangaActor = system.actorOf(Props[MangaActor])
+
   def route(): Route = {
     concat(
       get {
@@ -29,7 +34,6 @@ object MangaController extends MangaApiJsonSupport {
       post {
         pathPrefix("chapter" / "list") {
           entity(as[MangaInfo]) { manga =>
-            println(manga)
             complete(source.extractChapterList(manga).get)
           }
         }
