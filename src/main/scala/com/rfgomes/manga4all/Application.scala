@@ -3,7 +3,8 @@ package com.rfgomes.manga4all
 import akka.actor.ActorSystem
 import akka.http.scaladsl.server.{Directives, HttpApp, Route}
 import akka.stream.ActorMaterializer
-import com.rfgomes.manga4all.manga.api.{FavoritesController, MangaController, ReadHistoryController}
+import com.rfgomes.manga4all.history.api.{FavoritesController, ReadHistoryController}
+import com.rfgomes.manga4all.manga.api.MangaController
 import com.rfgomes.manga4all.scrapper.Source
 
 import scala.language.postfixOps
