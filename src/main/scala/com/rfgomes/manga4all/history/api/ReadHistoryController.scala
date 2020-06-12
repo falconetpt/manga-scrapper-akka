@@ -20,7 +20,7 @@ object ReadHistoryController extends MangaHistoryJsonSupport {
   def route(): Route = {
     concat(
       get {
-        pathPrefix("favorite") {
+        pathPrefix("history") {
           implicit val askTimeout = Timeout(200 millis)
 
           onSuccess(readHistoryActor ? GetReadHistory) {
@@ -29,7 +29,7 @@ object ReadHistoryController extends MangaHistoryJsonSupport {
         }
       },
       post {
-        pathPrefix("favorite") {
+        pathPrefix("history") {
           entity(as[ReadHistory]) { manga =>
             readHistoryActor ! SaveReadManga(manga)
             complete("ok post")

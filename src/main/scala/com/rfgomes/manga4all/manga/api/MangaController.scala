@@ -41,7 +41,14 @@ object MangaController extends MangaApiJsonSupport {
       post {
         pathPrefix("chapter" / "extract") {
           entity(as[MangaChapter]) { manga =>
-            complete(source.extractChapterImages(manga).get)
+            val result = source.extractChapterImages(manga.copy(name = "")).get
+
+            //async fetch next and prev page
+            List(result.previousChapter, result.nextChapter).flatten
+                .map(c => MangaChapter(manga.mangaId, c, "", manga.source))
+                .foreach(c => mangaActor ! GetManga(() => source.extractChapterImages(c)))
+
+            complete(result)
           }
         }
       }
