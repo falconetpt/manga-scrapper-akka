@@ -1,8 +1,5 @@
 package com.rfgomes.manga4all.scrapper.client
 
-import java.io.File
-import java.nio.charset.Charset
-
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 

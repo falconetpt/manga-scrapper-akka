@@ -16,11 +16,13 @@ object MangaController extends MangaApiJsonSupport {
     concat(
       get {
         pathPrefix("latest" / LongNumber) { page =>
+          mangaActor ! GetManga(() => source.getLatest(page.toInt + 1).get)
           complete(source.getLatest(page.toInt).get)
         }
       },
       get {
         pathPrefix("popular" / LongNumber) { page =>
+          mangaActor ! GetManga(() => source.getPopular(page.toInt + 1).get)
           complete(source.getPopular(page.toInt).get)
         }
       },
