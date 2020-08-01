@@ -9,29 +9,29 @@ import com.rfgomes.manga4all.history.domain.FavoriteActor.{AddFavorite, GetAllFa
 import com.rfgomes.manga4all.history.domain.{FavoriteActor, FavoriteHistory}
 import com.rfgomes.manga4all.manga.domain.MangaInfo
 
+import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-object FavoritesController extends MangaHistoryJsonSupport {
+object ObjectData {
   val system = ActorSystem("FavoriteActorSystem")
   val favoritesActor = system.actorOf(Props[FavoriteActor])
+  val data = ArrayBuffer[Any]()
 
   def route(): Route = {
     concat(
       get {
-        pathPrefix("favorite") {
+        pathPrefix("metrics/get") {
           implicit val askTimeout = Timeout(200 millis)
 
-          onSuccess(favoritesActor ? GetAllFavorites) {
-            case x: List[MangaInfo] => complete(x)
-          }
+          complete(data.toString())
         }
       },
       post {
-        pathPrefix("favorite") {
-          entity(as[FavoriteHistory]) { mangaInfo =>
-            favoritesActor ! AddFavorite(mangaInfo)
-            complete("ok post")
+        pathPrefix("metrics/save") {
+          entity(as[Any]) { value =>
+            data.addOne(value)
+            complete("Completed")
           }
         }
       }
