@@ -1,36 +1,27 @@
 package com.rfgomes.manga4all.history.api
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.ActorSystem
 import akka.http.scaladsl.server.Route
-import akka.pattern.ask
-import akka.util.Timeout
-import com.rfgomes.manga4all.WebServer.{as, complete, concat, entity, get, onSuccess, pathPrefix, post}
-import com.rfgomes.manga4all.history.domain.FavoriteActor.{AddFavorite, GetAllFavorites}
-import com.rfgomes.manga4all.history.domain.{FavoriteActor, FavoriteHistory}
-import com.rfgomes.manga4all.manga.domain.MangaInfo
+import com.rfgomes.manga4all.WebServer.{as, complete, concat, entity, get, pathPrefix, post}
 
 import scala.collection.mutable.ArrayBuffer
-import scala.concurrent.duration._
 import scala.language.postfixOps
 
-object ObjectData {
-  val system = ActorSystem("FavoriteActorSystem")
-  val favoritesActor = system.actorOf(Props[FavoriteActor])
-  val data = ArrayBuffer[Any]()
+object ObjectData extends ObjectJsonSupport {
+  val system = ActorSystem("ObjectsActor")
+  val elements = ArrayBuffer[TestDataObject]()
 
   def route(): Route = {
     concat(
       get {
-        pathPrefix("metrics/get") {
-          implicit val askTimeout = Timeout(200 millis)
-
-          complete(data.toString())
+        pathPrefix("metrics") {
+          complete(TestDataObjectResult(elements.toList))
         }
       },
       post {
-        pathPrefix("metrics/save") {
-          entity(as[Any]) { value =>
-            data.addOne(value)
+        pathPrefix("metrics") {
+          entity(as[TestDataObject]) { e =>
+            elements.addOne(e)
             complete("Completed")
           }
         }
