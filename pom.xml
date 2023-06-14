@@ -15,7 +15,7 @@
         <scala.version>2.13.0</scala.version>
         <scala.test>3.0.5</scala.test>
         <jsoup.version>1.13.1</jsoup.version>
-        <guava.version>29.0-jre</guava.version>
+        <guava.version>32.0.0-jre</guava.version>
         <akka.http.version>10.1.12</akka.http.version>
         <akka.stream.version>2.6.5</akka.stream.version>
     </properties>
